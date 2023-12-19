@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="Account"
+        android:key="account settings"
+      >
+
+        <CheckBoxPreference
+            android:key="master"
+            android:summary="Master controls the main screen."
+            android:title="Master"
+            android:enabled="false"
+            />
+
+        <CheckBoxPreference
+            android:key="slave"
+            android:summary="Slave receives updates from the master and displays them on its own screen."
+            android:title="Slave"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Theme"
+        android:key="theme settings">
+        <Preference
+            android:key="toggle_theme"
+            android:title="Toggle Theme" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Auth"
+        android:key="auth settings">
+        <Preference
+            android:key="logout"
+            android:title="Logout"
+            android:summary="Sign out from your account"/>
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "943897158763",
+    "project_id": "hold-my-calls",
+    "storage_bucket": "hold-my-calls.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:943897158763:android:1269068ddeedd380877d2e",
+        "android_client_info": {
+          "package_name": "com.smailgourmi.holdmycalls"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-thn7YKdEPHeReqQ8CRX9pBCdiXbWqEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

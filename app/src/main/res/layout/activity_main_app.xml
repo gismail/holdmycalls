@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/drawerLayout"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".MainAppActivity">
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:layout_editor_absoluteX="184dp"
+        tools:layout_editor_absoluteY="96dp">
+
+        <Button
+            android:id="@+id/masterButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/activate_master_option" />
+
+        <Button
+            android:id="@+id/slaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/activate_slave_option" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+<com.google.android.material.navigation.NavigationView
+    android:id="@+id/nav_view"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    app:headerLayout="@layout/nav_header"
+    app:menu="@menu/nav_menu"
+    android:layout_gravity="start"
+    android:fitsSystemWindows="true"
+    />
+
+</androidx.drawerlayout.widget.DrawerLayout>

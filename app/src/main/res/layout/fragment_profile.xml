@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+        <import type="com.smailgourmi.holdmycalls.ui.chats.ChatsViewModel" />
+
+        <variable
+            name="chatwithuserinfo"
+            type="com.smailgourmi.holdmycalls.data.model.ChatWithContactInfo" />
+        <variable
+            name="viewmodel"
+            type="com.smailgourmi.holdmycalls.ui.profile.ProfileViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline60"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.56" />
+
+        <ImageView
+            android:id="@+id/blurredUserImage"
+            android:layout_width="0dp"
+            android:layout_height="170dp"
+            android:contentDescription="@string/user_image"
+            android:scaleType="centerCrop"
+            app:bind_image_url_blur="@{viewmodel.userContact.profileImageUrl}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/userImageCardView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="60dp"
+            app:cardPreventCornerOverlap="true"
+            app:layout_constraintBottom_toBottomOf="@id/blurredUserImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/blurredUserImage"
+            app:strokeColor="@android:color/white"
+            app:strokeWidth="2dp">
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="0dp"
+                android:contentDescription="@string/user_image"
+                android:scaleType="centerCrop"
+                app:bind_image_url="@{viewmodel.userContact.profileImageUrl}"
+                tools:src="@tools:sample/avatars[0]" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/nameText"
+            style="@style/BoldText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@{viewmodel.userContact.displayName}"
+            android:textSize="36sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userImageCardView"
+            tools:text="Name" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:maxLength="40"
+            style="@style/MessageSeen"
+            android:singleLine="true"
+            android:text="@{viewmodel.userContact.status}"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/nameText"
+            tools:text="Status" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/statesLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="42dp"
+            android:layout_marginTop="42dp"
+            android:layout_marginEnd="42dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline60">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+
+
+            <Button
+                android:id="@+id/changeDisplayName"
+                android:layout_width="match_parent"
+                android:backgroundTint="@color/textError"
+                android:layout_height="55dp"
+                android:layout_marginTop="5dp"
+                android:onClick="@{() -> viewmodel.changeDisplayNamePressed()}"
+                android:text="Change Name"
+                android:textSize="16sp"
+                android:visibility="visible"
+                app:layout_constraintTop_toBottomOf="@id/sendSMS"
+                tools:visibility="visible" />
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+                <Button
+                    android:id="@+id/changeImageUrl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="@{() -> viewmodel.changeImageURLPressed()}"
+                    android:text="@string/change_image"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="5dp"
+                    tools:visibility="visible" />
+                <Button
+                    android:id="@+id/changeStatus"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="@{() -> viewmodel.changeStatusPressed()}"
+                    android:text="@string/change_status"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="5dp"
+                    tools:visibility="visible" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="16dp">
+                <Button
+                    android:id="@+id/makeCall"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="@{()-> viewmodel.makeCallPressed()}"
+                    android:text="Call"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginEnd="5dp"
+                    tools:visibility="visible" />
+                <Button
+                    android:id="@+id/sendSMS"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="@{() -> viewmodel.sendSMSPressed()}"
+                    android:text="Send SMS"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginStart="5dp"
+                    tools:visibility="visible" />
+            </LinearLayout>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

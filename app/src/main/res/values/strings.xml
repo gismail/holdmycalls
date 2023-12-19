@@ -1,0 +1,84 @@
+<resources>
+    <string name="app_name">Hold My Calls/SMS</string>
+
+    <string name="account_setup_title">Account Setup</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="email_address">Email Address</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+    <string name="master_mode">Master Mode</string>
+    <string name="slave_mode">Slave Mode</string>
+    <string name="master_activation_message">Master mode activated. Please connect to your account and activate slave mode on another device.</string>
+    <string name="log_in">Log In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="activate_master_option">Activate Master Option</string>
+    <string name="activate_slave_option">Activate Slave Option</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="welcome">Welcome To Hold My Calls</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
+    <string name="log_out">Log Out</string>
+    <string name="my_profile">My profile</string>
+    <string name="settings">Settings</string>
+    <string name="home">Home</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="database_reference">https://hold-my-calls-default-rtdb.europe-west1.firebasedatabase.app/</string>
+    <string name="metadata">metadata</string>
+    <string name="chats">chats</string>
+    <string name="messages">messages</string>
+    <string name="users">users</string>
+    <string name="contacts">contacts</string>
+    <string name="text_message">Text message</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="title_activity_settings">Settings Activity</string>
+    <string name="user_role">userRole</string>
+
+    <string name="title_chats">Chats</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_users">Users</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_profile">Profile</string>
+    <string name="title_chat">Chat</string>
+    <string name="user_image">User image</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="enter_message">Enter message</string>
+    <string name="send">SEND</string>
+    <string name="create_a_new_account">Create a new account</string>
+    <string name="display_name">Display name</string>
+    <string name="email">Email</string>
+    <string name="create">Create</string>
+    <string name="login_to_your_account">Login to your account</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="remove_friend">Remove Friend</string>
+    <string name="accept_friend_request">Accept Friend Request</string>
+    <string name="request_sent">Request sent</string>
+    <string name="decline_friend_request">Decline Friend Request</string>
+    <string name="change_image">Change Image</string>
+    <string name="logout">Logout</string>
+    <string name="change_status">Change Status</string>
+    <string name="create_account">Create account</string>
+    <string name="new_friend_request">New friend request</string>
+    <string name="login">login</string>
+    <string name="welcome_to_quick_chat">Welcome to Hold My Calls/SMS</string>
+    <string name="login_or_create_an_account_to_get_started">Login or create an account to get started</string>
+    <string name="chat_icon">Chat icon</string>
+
+</resources>

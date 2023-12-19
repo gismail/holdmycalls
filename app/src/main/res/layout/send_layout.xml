@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="20dp">
+        <TextView
+            android:id="@+id/txt_send_sms_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="This is a sent message"
+            android:layout_alignParentEnd="true"
+            android:textSize="18sp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:background="@drawable/ic_sms_message_box_background"/>
+
+        <TextView
+            android:id="@+id/sms_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_send_sms_message"
+            android:layout_marginTop="1dp"
+            android:layout_marginEnd="20dp"
+            android:padding="2dp"
+            android:text="22:48 PM · SMS"
+            android:textSize="14sp"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"
+            />
+
+    </RelativeLayout>
+</RelativeLayout>
