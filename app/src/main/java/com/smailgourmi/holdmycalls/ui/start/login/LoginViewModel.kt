@@ -2,25 +2,30 @@ package com.smailgourmi.holdmycalls.ui.start.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.smailgourmi.holdmycalls.data.model.Login
-import com.smailgourmi.holdmycalls.data.db.repository.AuthRepository
-import com.smailgourmi.holdmycalls.ui.DefaultViewModel
+import com.google.firebase.auth.FirebaseUser
 import com.smailgourmi.holdmycalls.data.Event
 import com.smailgourmi.holdmycalls.data.Result
+import com.smailgourmi.holdmycalls.data.db.repository.AuthRepository
+import com.smailgourmi.holdmycalls.data.model.Login
+import com.smailgourmi.holdmycalls.ui.DefaultViewModel
 import com.smailgourmi.holdmycalls.util.isEmailValid
 import com.smailgourmi.holdmycalls.util.isTextValid
-import com.google.firebase.auth.FirebaseUser
 
 class LoginViewModel : DefaultViewModel() {
 
-    private val authRepository = AuthRepository()
+    val authRepository = AuthRepository()
     private val _isLoggedInEvent = MutableLiveData<Event<FirebaseUser>>()
+    private val _forgotClicked = MutableLiveData<Event<Unit>>()
+    private val _signupClicked = MutableLiveData<Event<Unit>>()
+
+
 
     val isLoggedInEvent: LiveData<Event<FirebaseUser>> = _isLoggedInEvent
     val emailText = MutableLiveData<String>() // Two way
     val passwordText = MutableLiveData<String>() // Two way
     val isLoggingIn = MutableLiveData<Boolean>() // Two way
-
+    val forgotClicked : MutableLiveData<Event<Unit>> = _forgotClicked
+    val signUpClicked : MutableLiveData<Event<Unit>> = _signupClicked
     private fun login() {
         isLoggingIn.value = true
         val login = Login(emailText.value!!, passwordText.value!!)
@@ -43,5 +48,13 @@ class LoginViewModel : DefaultViewModel() {
         }
 
         login()
+    }
+
+    fun fogotPWDPressed(){
+        _forgotClicked.value = Event(Unit)
+    }
+
+    fun signUpPressed(){
+        _signupClicked.value = Event(Unit)
     }
 }

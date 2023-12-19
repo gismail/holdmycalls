@@ -3,7 +3,7 @@ package com.smailgourmi.holdmycalls.ui.main
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.fredrikbogg.android_chat_app.data.db.remote.FirebaseAuthStateObserver
+import com.smailgourmi.holdmycalls.data.db.remote.FirebaseAuthStateObserver
 import com.smailgourmi.holdmycalls.data.db.repository.AuthRepository
 import com.smailgourmi.holdmycalls.data.db.repository.DatabaseRepository
 import com.google.firebase.auth.FirebaseUser

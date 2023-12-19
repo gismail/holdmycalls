@@ -1,4 +1,4 @@
-package com.fredrikbogg.android_chat_app.data.db.remote
+package com.smailgourmi.holdmycalls.data.db.remote
 
 import com.smailgourmi.holdmycalls.data.model.CreateUser
 import com.smailgourmi.holdmycalls.data.model.Login
@@ -40,6 +40,9 @@ class FirebaseAuthSource {
 
     fun loginWithEmailAndPassword(login: Login): Task<AuthResult> {
         return authInstance.signInWithEmailAndPassword(login.email, login.password)
+    }
+    fun resetPasswordWithEmail(emailUser: String): Task<Void> {
+        return authInstance.sendPasswordResetEmail(emailUser)
     }
 
     fun createUser(createUser: CreateUser): Task<AuthResult> {

@@ -77,6 +77,9 @@
             app:destination="@id/navigation_chats"
             app:launchSingleTop="true"
             app:popUpTo="@id/startFragment" />
+        <action
+            android:id="@id/action_startFragment_to_createAccountFragment"
+            app:destination="@id/createAccountFragment"/>
     </fragment>
     <fragment
         android:id="@+id/createAccountFragment"
