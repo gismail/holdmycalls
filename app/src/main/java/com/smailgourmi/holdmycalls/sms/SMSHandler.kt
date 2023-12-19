@@ -26,7 +26,7 @@ import com.smailgourmi.holdmycalls.util.hashPhoneNumber
 interface SmsSendCallback {
     fun onMessageSent(lastMessage: Message?)
     fun onMessageFailed(error: String)
-    fun onMessageDelivered(chatID: Message?)
+    fun onMessageDelivered(lastMessage: Message?)
 }
 
 
