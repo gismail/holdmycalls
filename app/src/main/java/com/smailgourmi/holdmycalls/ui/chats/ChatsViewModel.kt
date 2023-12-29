@@ -62,7 +62,7 @@ class ChatsViewModel(val myUserID: String) : DefaultViewModel() {
     private fun loadAndObserveChat(userContact: UserContact) {
         val observer = FirebaseReferenceValueObserver()
         firebaseReferenceObserverList.add(observer)
-        repository.loadAndObserveChat(convertTwoUserIDs(myUserID, userContact.contactID), observer) { result: Result<Chat> ->
+        repository.loadAndObserveChat(myUserID,convertTwoUserIDs(myUserID, userContact.contactID), observer) { result: Result<Chat> ->
             if (result is Result.Success) {
                 _updatedChatWithContactInfo.value = result.data?.let {
                     it.info.id = convertTwoUserIDs(myUserID,userContact.contactID)

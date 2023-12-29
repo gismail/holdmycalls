@@ -7,7 +7,6 @@ import com.smailgourmi.holdmycalls.util.hashPhoneNumber
 data class User(
     @get:PropertyName("info") @set:PropertyName("info") var info: UserInfo = UserInfo(),
     @get:PropertyName("contacts") @set:PropertyName("contacts") var contacts: HashMap<String, UserContact> = HashMap(),
-    @get:PropertyName("notifications") @set:PropertyName("notifications") var notifications: HashMap<String, UserNotification> = HashMap(),
 )
 
 data class UserContact(
@@ -27,8 +26,5 @@ data class UserInfo(
     @get:PropertyName("online") @set:PropertyName("online") var online: Boolean = false
 )
 
-data class UserNotification(
-    @get:PropertyName("userID") @set:PropertyName("userID") var userID: String = ""
-)
 
 

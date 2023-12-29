@@ -1,7 +1,6 @@
 package com.smailgourmi.holdmycalls.ui.chat
 
 import androidx.lifecycle.*
-import com.smailgourmi.holdmycalls.App
 import com.smailgourmi.holdmycalls.data.db.entity.Chat
 import com.smailgourmi.holdmycalls.data.db.entity.Message
 import com.smailgourmi.holdmycalls.data.db.remote.FirebaseReferenceChildObserver
@@ -9,7 +8,6 @@ import com.smailgourmi.holdmycalls.data.db.remote.FirebaseReferenceValueObserver
 import com.smailgourmi.holdmycalls.data.db.repository.DatabaseRepository
 import com.smailgourmi.holdmycalls.data.Result
 import com.smailgourmi.holdmycalls.data.db.entity.UserContact
-import com.smailgourmi.holdmycalls.sms.SmsSender
 import com.smailgourmi.holdmycalls.ui.DefaultViewModel
 import com.smailgourmi.holdmycalls.util.addNewItem
 
@@ -51,12 +49,12 @@ class ChatViewModel(private val myUserID: String, private val contactID: String,
     }
 
     private fun checkAndUpdateLastMessageSeen() {
-        dbRepository.loadChat(chatID) { result: Result<Chat> ->
+        dbRepository.loadChat(myUserID, chatID) { result: Result<Chat> ->
             if (result is Result.Success && result.data != null) {
                 result.data.lastMessage.let {
                     if (!it.seen && it.senderID != myUserID) {
                         it.seen = true
-                        dbRepository.updateChatLastMessage(chatID, it)
+                        dbRepository.updateChatLastMessage(myUserID,chatID, it)
                     }
                 }
             }
@@ -64,7 +62,7 @@ class ChatViewModel(private val myUserID: String, private val contactID: String,
     }
 
     private fun setupChat() {
-        dbRepository.loadAndObserveConact(myUserID,contactID, fbRefUserInfoObserver) { result: Result<UserContact> ->
+        dbRepository.loadAndObserveContact(myUserID,contactID, fbRefUserInfoObserver) { result: Result<UserContact> ->
             onResult(_userContact, result)
             if (result is Result.Success && !fbRefMessagesChildObserver.isObserving()) {
                 loadAndObserveNewMessages()
@@ -75,7 +73,7 @@ class ChatViewModel(private val myUserID: String, private val contactID: String,
     private fun loadAndObserveNewMessages() {
         messagesList.addSource(_addedMessage) { messagesList.addNewItem(it) }
 
-        dbRepository.loadAndObserveMessagesAdded(
+        dbRepository.loadAndObserveMessagesAdded(myUserID,
             chatID,
             fbRefMessagesChildObserver
         ) { result: Result<Message> ->
@@ -86,8 +84,8 @@ class ChatViewModel(private val myUserID: String, private val contactID: String,
     fun sendMessagePressed() {
         if (!newMessageText.value.isNullOrBlank()) {
             val newMsg = Message(myUserID,contactID, newMessageText.value!!)
-            dbRepository.updateNewMessage(chatID, newMsg)
-            dbRepository.updateChatLastMessage(chatID, newMsg)
+            dbRepository.updateNewMessage(myUserID,chatID, newMsg)
+            dbRepository.updateChatLastMessage(myUserID,chatID, newMsg)
             newMessageText.value = null
         }
     }

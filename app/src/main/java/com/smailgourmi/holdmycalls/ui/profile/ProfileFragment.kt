@@ -20,6 +20,7 @@ import com.smailgourmi.holdmycalls.R
 import com.smailgourmi.holdmycalls.data.EventObserver
 import com.smailgourmi.holdmycalls.data.model.ChatWithContactInfo
 import com.smailgourmi.holdmycalls.databinding.FragmentProfileBinding
+import com.smailgourmi.holdmycalls.ui.call.CallFragment
 import com.smailgourmi.holdmycalls.ui.chat.ChatFragment
 import com.smailgourmi.holdmycalls.ui.main.MainActivity
 import com.smailgourmi.holdmycalls.util.convertTwoUserIDs
@@ -102,6 +103,15 @@ class ProfileFragment : Fragment() {
 
         viewModel.selectedSendSMS.observe(viewLifecycleOwner,
             EventObserver{navigateToChat(it)})
+        viewModel.selectedCall.observe(viewLifecycleOwner, EventObserver{makeCall()})
+    }
+
+    private fun makeCall() {
+        val bundle = bundleOf(
+            CallFragment.ARGS_KEY_USER_ID to App.myUserID ,
+            CallFragment.ARGS_KEY_USER_CONTACT_ID to viewModel.userContact.value!!.contactID,
+        )
+        findNavController().navigate(R.id.action_navigation_profile_to_callFragment, bundle)
     }
 
     private fun navigateToChat(chatWithContactInfo: ChatWithContactInfo) {
@@ -110,7 +120,7 @@ class ProfileFragment : Fragment() {
             ChatFragment.ARGS_KEY_USER_CONTACT_ID to chatWithContactInfo.mContactInfo.contactID,
             ChatFragment.ARGS_KEY_CHAT_ID to chatWithContactInfo.mChat.info.id
         )
-        findNavController().navigate(R.id.action_navigation_chats_to_chatFragment, bundle)
+        findNavController().navigate(R.id.action_navigation_profile_to_chatFragment, bundle)
     }
 
     private fun showEditTextDialog(title:String) {

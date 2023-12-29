@@ -14,10 +14,23 @@
             app:destination="@id/chatFragment" />
     </fragment>
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.smailgourmi.holdmycalls.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_calls"
+        android:name="com.smailgourmi.holdmycalls.ui.calls.CallsFragment"
+        android:label="@string/title_calls"
+        tools:layout="@layout/fragment_calls" >
+        <action
+            android:id="@+id/action_navigation_calls_to_callFragment"
+            app:destination="@+id/callFragment"/>
+    </fragment>
+    <fragment
+        android:id="@+id/callFragment"
+        android:name="com.smailgourmi.holdmycalls.ui.call.CallFragment"
+        android:label="Call"
+        tools:layout="@layout/fragment_call">
+        <action
+            android:id="@+id/navigation_call_to_callsFragment"
+            app:destination="@+id/navigation_calls"/>
+    </fragment>
     <fragment
         android:id="@+id/navigation_users"
         android:name="com.smailgourmi.holdmycalls.ui.contacts.ContactsFragment"
@@ -44,8 +57,11 @@
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile">
         <action
-            android:id="@+id/action_navigation_chats_to_chatFragment"
+            android:id="@+id/action_navigation_profile_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_navigation_profile_to_callFragment"
+            app:destination="@id/callFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"

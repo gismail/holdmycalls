@@ -1,6 +1,5 @@
 package com.smailgourmi.holdmycalls.ui.main
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -19,7 +18,6 @@ import com.smailgourmi.holdmycalls.R
 import com.smailgourmi.holdmycalls.data.db.remote.FirebaseDataSource
 import com.smailgourmi.holdmycalls.sms.SmsReceiverService
 import com.smailgourmi.holdmycalls.util.forceHideKeyboard
-import com.smailgourmi.holdmycalls.util.requestPermissions
 
 const val SMS_PERMISSION_REQUEST = 1
 
@@ -27,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navView: BottomNavigationView
     private lateinit var mainProgressBar: ProgressBar
     private lateinit var mainToolbar: Toolbar
-    private lateinit var notificationsBadge: BadgeDrawable
     private val viewModel: MainViewModel by viewModels()
 
 
@@ -40,9 +37,6 @@ class MainActivity : AppCompatActivity() {
         navView = findViewById(R.id.nav_view)
         mainProgressBar = findViewById(R.id.main_progressBar)
 
-        notificationsBadge =
-            navView.getOrCreateBadge(R.id.navigation_notifications).apply { isVisible = false }
-
         setSupportActionBar(mainToolbar)
 
         val navController = findNavController(R.id.nav_host_fragment)
@@ -53,6 +47,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.chatFragment -> navView.visibility = View.GONE
                 R.id.startFragment -> navView.visibility = View.GONE
                 R.id.loginFragment -> navView.visibility = View.GONE
+                R.id.callFragment -> navView.visibility = View.GONE
                 R.id.createAccountFragment -> navView.visibility = View.GONE
                 else -> navView.visibility = View.VISIBLE
             }
@@ -63,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_chats,
-                R.id.navigation_notifications,
+                R.id.navigation_calls,
                 R.id.navigation_users,
                 R.id.navigation_settings,
                 R.id.startFragment
@@ -73,8 +68,6 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
         // Request Permissions
-        requestPermissions(this, arrayOf(Manifest.permission.SEND_SMS, Manifest.permission.READ_SMS,Manifest.permission.RECEIVE_SMS,Manifest.permission.RECEIVE_MMS),
-            SMS_PERMISSION_REQUEST)
 
     }
 
@@ -107,20 +100,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         FirebaseDataSource.dbInstance.goOnline()
-        setupViewModelObservers()
         super.onResume()
     }
 
-    private fun setupViewModelObservers() {
-        viewModel.userNotificationsList.observe(this) {
-            if (it.size > 0) {
-                notificationsBadge.number = it.size
-                notificationsBadge.isVisible = true
-            } else {
-                notificationsBadge.isVisible = false
-            }
-        }
-    }
+
 
     fun showGlobalProgressBar(show: Boolean) {
         if (show) mainProgressBar.visibility = View.VISIBLE

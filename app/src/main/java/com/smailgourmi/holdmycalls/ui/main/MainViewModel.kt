@@ -8,23 +8,23 @@ import com.smailgourmi.holdmycalls.data.db.repository.AuthRepository
 import com.smailgourmi.holdmycalls.data.db.repository.DatabaseRepository
 import com.google.firebase.auth.FirebaseUser
 import com.smailgourmi.holdmycalls.App
-import com.smailgourmi.holdmycalls.data.db.entity.UserNotification
 import com.smailgourmi.holdmycalls.data.db.remote.FirebaseReferenceConnectedObserver
 import com.smailgourmi.holdmycalls.data.db.remote.FirebaseReferenceValueObserver
 import com.smailgourmi.holdmycalls.data.Result
+import com.smailgourmi.holdmycalls.data.db.entity.Call
 
 class MainViewModel: ViewModel() {
     private val dbRepository = DatabaseRepository()
     private val authRepository = AuthRepository()
 
-    private val _userNotificationsList = MutableLiveData<MutableList<UserNotification>>()
+    private val _userNotificationsList = MutableLiveData<MutableList<Call>>()
 
     private val fbRefNotificationsObserver = FirebaseReferenceValueObserver()
     private val fbAuthStateObserver = FirebaseAuthStateObserver()
     private val fbRefConnectedObserver = FirebaseReferenceConnectedObserver()
     private var userID = App.myUserID
 
-    var userNotificationsList: LiveData<MutableList<UserNotification>> = _userNotificationsList
+    var userCallsList: LiveData<MutableList<Call>> = _userNotificationsList
 
     init {
         setupAuthObserver()
@@ -41,7 +41,7 @@ class MainViewModel: ViewModel() {
         authRepository.observeAuthState(fbAuthStateObserver) { result: Result<FirebaseUser> ->
             if (result is Result.Success) {
                 userID = result.data!!.uid
-                startObservingNotifications()
+                startObservingCalls()
                 fbRefConnectedObserver.start(userID)
             } else {
                 fbRefConnectedObserver.clear()
@@ -50,8 +50,8 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    private fun startObservingNotifications() {
-        dbRepository.loadAndObserveUserNotifications(userID, fbRefNotificationsObserver) { result: Result<MutableList<UserNotification>> ->
+    private fun startObservingCalls() {
+        dbRepository.loadAndObserveUserCalls(userID, fbRefNotificationsObserver) { result: Result<MutableList<Call>> ->
             if (result is Result.Success) {
                 _userNotificationsList.value = result.data!!
             }

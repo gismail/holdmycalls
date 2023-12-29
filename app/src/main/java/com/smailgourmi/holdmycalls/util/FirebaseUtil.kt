@@ -1,12 +1,18 @@
 package com.smailgourmi.holdmycalls.util
 
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.getValue
 
 fun <T> wrapSnapshotToClass(className: Class<T>, snap: DataSnapshot): T? {
     return snap.getValue(className)
 }
-fun <T> wrapSnapshotToClassChild(className: Class<T>, snap: DataSnapshot): T? {
-    return snap.child("lastMessage").getValue(className)
+fun <T> wrapSnapshotToClassChild(className: Class<T>, snap: DataSnapshot,path:String?): T? {
+    return if(path !== null){
+        snap.child(path).getValue(className)
+    }else{
+        snap.getValue(className)
+    }
+
 }
 
 fun <T> wrapSnapshotToArrayList(className: Class<T>, snap: DataSnapshot): MutableList<T> {

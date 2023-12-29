@@ -47,6 +47,9 @@ class ProfileViewModel(private val myUserID: String, private val contactID: Stri
     private val _selectedSendSMS = MutableLiveData<Event<ChatWithContactInfo>>()
     var selectedSendSMS: LiveData<Event<ChatWithContactInfo>> = _selectedSendSMS
 
+    private val _selectedCall = MutableLiveData<Event<Unit>>()
+    var selectedCall: LiveData<Event<Unit>> = _selectedCall
+
     private val _userContact: MutableLiveData<UserContact> = MutableLiveData()
     val userContact: LiveData<UserContact> = _userContact
 
@@ -64,7 +67,7 @@ class ProfileViewModel(private val myUserID: String, private val contactID: Stri
         repository.loadContact(myUserID,contactID) { result: Result<UserContact> ->
             onResult(_userContact, result)
             if (result is Result.Success) {
-                repository.loadAndObserveConact(myUserID,contactID, firebaseReferenceObserver) { result2: Result<UserContact> ->
+                repository.loadAndObserveContact(myUserID,contactID, firebaseReferenceObserver) { result2: Result<UserContact> ->
                     onResult(_userContact, result2)
                 }
             }
@@ -83,7 +86,7 @@ class ProfileViewModel(private val myUserID: String, private val contactID: Stri
         _editImageEvent.value = Event(Unit)
     }
     fun makeCallPressed(){
-
+        _selectedCall.value = Event(Unit)
     }
 
 

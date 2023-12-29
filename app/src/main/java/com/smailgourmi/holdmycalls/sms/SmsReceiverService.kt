@@ -6,13 +6,14 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
+import com.smailgourmi.holdmycalls.App
 
 
 class SmsReceiverService : Service() {
 
     private val binder = SmsReceiverBinder()
     private val smsReceiver: BroadcastReceiver = SmsReceiver()
-    private val smsSender:SmsSender = SmsSender()
+    private val smsSender:SmsSender = SmsSender(App.myUserID)
     override fun onCreate() {
         super.onCreate()
 

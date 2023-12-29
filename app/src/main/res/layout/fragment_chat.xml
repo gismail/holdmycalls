@@ -75,6 +75,7 @@
                 android:clickable="true"
                 android:onClick="@{() -> viewmodel.sendMessagePressed()}"
                 android:text="@string/send"
+                app:cornerRadius="15dp"
                 android:textSize="14sp" />
         </LinearLayout>
 

@@ -1,52 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewmodel"
+            type="com.smailgourmi.holdmycalls.ui.call.CallViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:layout_height="fill_parent">
 
-        <ImageButton
-            android:id="@+id/end_call_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_end_call" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/contact_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold" />
-    </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/userImageCardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"
+                app:cardCornerRadius="60dp"
+                app:cardPreventCornerOverlap="true"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:strokeColor="@android:color/white"
+                app:strokeWidth="2dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="0dp"
+                    android:contentDescription="@string/user_image"
+                    android:scaleType="centerCrop"
+                    app:bind_image_url="@{viewmodel.userContact.profileImageUrl}"
+                    tools:src="@tools:sample/avatars[0]" />
+            </com.google.android.material.card.MaterialCardView>
 
-        <ImageButton
-            android:id="@+id/mute_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_mute" />
 
-        <ImageButton
-            android:id="@+id/speaker_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_speaker" />
-    </LinearLayout>
+            <!-- Caller information -->
+            <TextView
+                android:id="@+id/textCallerInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"
+                android:fontFamily="@font/nunito_bold"
+                android:text="@{viewmodel.userContact.displayName}"
+                android:textSize="48sp"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/call_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="24sp" />
-</LinearLayout>
+            <TextView
+                android:id="@+id/textCallerNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="@{viewmodel.userContact.phoneNumber}"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textCallState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"
+                android:text="Calling ..."
+                android:textSize="18sp" />
+
+            <!-- Call controls -->
+            <GridLayout
+                android:id="@+id/layoutCallControls"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+
+                android:layout_margin="20dp">
+
+                <Button
+                    android:id="@+id/btnMute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Mute" />
+
+                <Button
+                    android:id="@+id/btnSpeaker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    android:layout_gravity="end"
+                    android:layout_margin="5dp"
+                    android:text="Speaker" />
+
+                <Button
+                    android:id="@+id/btnEndCall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_row="0"
+                    android:layout_column="3"
+                    android:layout_margin="5dp"
+                    android:text="End Call" />
+            </GridLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

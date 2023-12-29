@@ -6,8 +6,8 @@
         android:icon="@drawable/ic_baseline_chat_bubble_24"
         android:title="@string/title_chats" />
     <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/ic_baseline_notifications_24"
+        android:id="@+id/navigation_calls"
+        android:icon="@drawable/ic_call_32"
         android:title="@string/title_notifications" />
     <item
         android:id="@+id/navigation_users"

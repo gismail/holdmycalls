@@ -146,10 +146,25 @@ class FirebaseDataSource {
             override fun onChildRemoved(snapshot: DataSnapshot) {}
         })
     }
-    private fun <T> attachChildrenListenerToBlock(resultClassName: Class<T>, b: ((Result<T>) -> Unit)): ChildEventListener {
+    private fun <T> attachChildrenListenerToBlock(path: String?,resultClassName: Class<T>, b: ((Result<T>) -> Unit)): ChildEventListener {
         return (object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                b.invoke(Result.Success(wrapSnapshotToClassChild(resultClassName, snapshot)))
+                b.invoke(Result.Success(wrapSnapshotToClassChild(resultClassName, snapshot,path)))
+            }
+            override fun onCancelled(error: DatabaseError) { b.invoke(Result.Error(error.message)) }
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                b.invoke(Result.Success(wrapSnapshotToClassChild(resultClassName, snapshot,path)))
+            }
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+        })
+    }
+
+    private fun <T> attachChildrenListenerToBlockWithList(resultClassName: Class<T>, b: ((Result<MutableList<T>>) -> Unit)): ChildEventListener {
+        return (object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                b.invoke(Result.Success(wrapSnapshotToArrayList(resultClassName, snapshot)))
             }
 
             override fun onCancelled(error: DatabaseError) { b.invoke(Result.Error(error.message)) }
@@ -157,7 +172,7 @@ class FirebaseDataSource {
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                b.invoke(Result.Success(wrapSnapshotToClassChild(resultClassName, snapshot)))
+                b.invoke(Result.Success(wrapSnapshotToArrayList(resultClassName, snapshot)))
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {}
@@ -187,8 +202,8 @@ class FirebaseDataSource {
         refToPath("users/$userID/info/status").setValue(status)
     }
 
-    fun updateLastMessage(chatID: String, message: Message) {
-        refToPath("chats/$chatID/lastMessage").setValue(message)
+    fun updateLastMessage( userID: String,chatID: String, message: Message,) {
+        refToPath("chats/$userID/$chatID/lastMessage").setValue(message)
     }
 
     fun updateNewFriend(myUser: UserContact, otherUser: UserContact) {
@@ -196,20 +211,29 @@ class FirebaseDataSource {
         //refToPath("users/${otherUser.contactID}/friends/${myUser.contactID}").setValue(myUser)
     }
 
-    fun updateNewNotification(otherUserID: String, userNotification: UserNotification) {
+    /*fun updateNewCall(otherUserID: String, userNotification: UserNotification) {
         refToPath("users/${otherUserID}/notifications/${userNotification.userID}").setValue(userNotification)
-    }
+    }*/
 
     fun updateNewUser(user: User) {
         refToPath("users/${user.info.id}").setValue(user)
     }
 
-    fun updateNewChat(chat: Chat) {
-        refToPath("chats/${chat.info.id}").setValue(chat)
+    fun updateNewChat(userID: String,chat: Chat ) {
+        refToPath("chats/$userID/${chat.info.id}").setValue(chat)
     }
 
-    fun pushNewMessage(messagesID: String, message: Message) {
-        refToPath("messages/$messagesID").push().setValue(message)
+    fun pushNewMessage(userID: String, messagesID: String, message: Message) {
+        refToPath("messages/$userID/$messagesID").push().setValue(message)
+    }
+
+    fun updateMessage(userID: String, messagesID: String, epochTimeMs: Double){
+        val query = refToPath("messages/$userID/$messagesID").orderByChild("epochTimeMs").equalTo(epochTimeMs)
+        query.get().addOnSuccessListener {dataSnapShot : DataSnapshot ->
+            dataSnapShot.children.forEach {
+                it.ref.child("seen").setValue(true);
+            }
+        }
     }
 
     //endregion
@@ -232,12 +256,12 @@ class FirebaseDataSource {
         refToPath("users/${userID}/sentRequests/$sentRequestID").setValue(null)
     }
 
-    fun removeChat(chatID: String) {
-        refToPath("chats/$chatID").setValue(null)
+    fun removeChat(userID: String, chatID: String) {
+        refToPath("chats/${userID}/$chatID").setValue(null)
     }
 
-    fun removeMessages(messagesID: String) {
-        refToPath("messages/$messagesID").setValue(null)
+    fun removeMessages(userID: String, messagesID: String) {
+        refToPath("messages/${userID}/$messagesID").setValue(null)
     }
 
     //endregion
@@ -278,17 +302,23 @@ class FirebaseDataSource {
         return src.task
     }
 
-    fun loadChatTask(chatID: String): Task<DataSnapshot> {
+    fun loadChatTask(userID: String, chatID: String): Task<DataSnapshot> {
         val src = TaskCompletionSource<DataSnapshot>()
         val listener = attachValueListenerToTaskCompletion(src)
-        refToPath("chats/$chatID").addListenerForSingleValueEvent(listener)
+        refToPath("chats/${userID}/$chatID").addListenerForSingleValueEvent(listener)
         return src.task
     }
 
-    fun loadNotificationsTask(userID: String): Task<DataSnapshot> {
+    fun loadMessages(myUserID: String, messagesIDs: String): Task<DataSnapshot> {
+        return refToPath("messages/${myUserID}/${messagesIDs}")
+            .orderByChild("seen").equalTo(false).get()
+
+    }
+
+    fun loadCallsTask(userID: String): Task<DataSnapshot> {
         val src = TaskCompletionSource<DataSnapshot>()
         val listener = attachValueListenerToTaskCompletion(src)
-        refToPath("users/$userID/notifications").addListenerForSingleValueEvent(listener)
+        refToPath("calls/$userID/calls").addListenerForSingleValueEvent(listener)
         return src.task
     }
 
@@ -310,31 +340,56 @@ class FirebaseDataSource {
         refObs.start(listener, refToPath("users/$userID/info"))
     }
 
-    fun <T> attachUserNotificationsObserver(resultClassName: Class<T>, userID: String, firebaseReferenceValueObserver: FirebaseReferenceValueObserver,
-                                            b: ((Result<MutableList<T>>) -> Unit)
+    fun <T> attachUserCallsObserver(resultClassName: Class<T>, userID: String, firebaseReferenceValueObserver: FirebaseReferenceValueObserver,
+                                    b: ((Result<MutableList<T>>) -> Unit)
     ) {
         val listener = attachValueListenerToBlockWithList(resultClassName, b)
-        firebaseReferenceValueObserver.start(listener, refToPath("users/$userID/notifications"))
+        firebaseReferenceValueObserver.start(listener, refToPath("calls/$userID/calls"))
     }
 
-    fun <T> attachMessagesObserver(resultClassName: Class<T>, messagesID: String, refObs: FirebaseReferenceChildObserver, b: ((Result<T>) -> Unit)) {
+    fun <T> attachMessagesObserver(
+        resultClassName: Class<T>,
+        userID: String,
+        messagesID: String,
+        refObs: FirebaseReferenceChildObserver,
+        b: (Result<T>) -> Unit
+    ) {
         val listener = attachChildListenerToBlock(resultClassName, b)
-        refObs.start(listener, refToPath("messages/$messagesID"))
+        refObs.start(listener, refToPath("messages/${userID}/$messagesID"))
     }
+
+    fun <T> attachChildrenMessagesObserver(
+        resultClassName: Class<T>,
+        userID: String,
+        refObs: FirebaseReferenceChildObserver,
+        b: (Result<MutableList<T>>) -> Unit
+    ) {
+        val listener = attachChildrenListenerToBlockWithList(resultClassName, b)
+        refObs.start(listener, refToPath("messages/${userID}/"))
+    }
+
     fun <T> attachContactsObserver(resultClassName: Class<T>, userID: String, refObs: FirebaseReferenceChildObserver, b: (Result<T>) -> Unit) {
         val listener = attachChildListenerToBlock(resultClassName, b)
         refObs.start(listener, refToPath("users/$userID/contacts"))
     }
 
     fun <T> attachLastMessagesObserver(resultClassName: Class<T>, userID: String, refObs: FirebaseReferenceChildObserver, b: (Result<T>) -> Unit) {
-        val listener = attachChildrenListenerToBlock(resultClassName, b)
-        refObs.start(listener, refToPath("chats/"))
+        val listener = attachChildrenListenerToBlock("lastMessage",resultClassName, b)
+        refObs.start(listener, refToPath("chats/${userID}"))
     }
 
-    fun <T> attachChatObserver(resultClassName: Class<T>, chatID: String, refObs: FirebaseReferenceValueObserver, b: ((Result<T>) -> Unit)) {
+    fun <T> attachChatObserver(
+        resultClassName: Class<T>,
+        userID: String,
+        chatID: String,
+        refObs: FirebaseReferenceValueObserver,
+        b: (Result<T>) -> Unit
+    ) {
         val listener = attachValueListenerToBlock(resultClassName, b)
-        refObs.start(listener, refToPath("chats/$chatID"))
+        refObs.start(listener, refToPath("chats/${userID}/$chatID"))
     }
+
+
 
     //endregion
 }

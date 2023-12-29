@@ -1,5 +1,6 @@
 package com.smailgourmi.holdmycalls.ui.chat
 
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -12,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.smailgourmi.holdmycalls.databinding.FragmentChatBinding
 import com.smailgourmi.holdmycalls.databinding.ToolbarAddonChatBinding
+import com.smailgourmi.holdmycalls.ui.main.SMS_PERMISSION_REQUEST
 
 
 class ChatFragment : Fragment() {
@@ -61,6 +63,7 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupCustomToolbar()
         setupListAdapter()
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -1,5 +1,6 @@
 package com.smailgourmi.holdmycalls.ui.chats
 
+import android.Manifest
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,7 @@ import com.smailgourmi.holdmycalls.data.model.ChatWithContactInfo
 import com.smailgourmi.holdmycalls.databinding.FragmentChatsBinding
 
 import com.smailgourmi.holdmycalls.ui.chat.ChatFragment
-import com.smailgourmi.holdmycalls.util.convertTwoUserIDs
+import com.smailgourmi.holdmycalls.ui.main.SMS_PERMISSION_REQUEST
 
 
 class ChatsFragment : Fragment() {
@@ -39,6 +40,16 @@ class ChatsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupListAdapter()
         setupObservers()
+        com.smailgourmi.holdmycalls.util.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.SEND_SMS,
+                Manifest.permission.READ_SMS,
+                Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.RECEIVE_MMS
+            ),
+            SMS_PERMISSION_REQUEST
+        )
     }
 
     private fun setupListAdapter() {

@@ -10,12 +10,10 @@ import com.smailgourmi.holdmycalls.data.db.entity.Chat
 import com.smailgourmi.holdmycalls.data.db.entity.Message
 import com.smailgourmi.holdmycalls.data.db.entity.User
 import com.smailgourmi.holdmycalls.data.db.entity.UserInfo
-import com.smailgourmi.holdmycalls.data.db.entity.UserNotification
 import com.smailgourmi.holdmycalls.data.Result
 
 class DatabaseRepository {
     private val firebaseDatabaseService = FirebaseDataSource()
-
 
     // region update Contact
     fun updateContactStatus(userID: String, contactID:String,status: String) {
@@ -31,8 +29,12 @@ class DatabaseRepository {
         firebaseDatabaseService.updateUserStatus(userID, status)
     }
 
-    fun updateNewMessage(messagesID: String, message: Message) {
-        firebaseDatabaseService.pushNewMessage(messagesID, message)
+    fun updateNewMessage(userID: String,messagesID: String, message: Message) {
+        firebaseDatabaseService.pushNewMessage(userID, messagesID, message)
+    }
+
+    fun updateMessage(userID: String,messagesID: String,epochTimeMs: Double){
+        firebaseDatabaseService.updateMessage(userID, messagesID, epochTimeMs)
     }
 
     fun updateNewUser(user: User) {
@@ -44,16 +46,16 @@ class DatabaseRepository {
     }
 
 
-    fun updateNewNotification(otherUserID: String, userNotification: UserNotification) {
+    /*fun updateNewNotification(otherUserID: String, userNotification: UserNotification) {
         firebaseDatabaseService.updateNewNotification(otherUserID, userNotification)
+    }*/
+
+    fun updateChatLastMessage(userID: String,chatID: String, message: Message) {
+        firebaseDatabaseService.updateLastMessage(userID,chatID, message,)
     }
 
-    fun updateChatLastMessage(chatID: String, message: Message) {
-        firebaseDatabaseService.updateLastMessage(chatID, message)
-    }
-
-    fun updateNewChat(chat: Chat){
-        firebaseDatabaseService.updateNewChat(chat)
+    fun updateNewChat(userID: String,chat: Chat){
+        firebaseDatabaseService.updateNewChat(userID,chat)
     }
 
     fun updateUserProfileImageUrl(userID: String, url: String){
@@ -81,12 +83,12 @@ class DatabaseRepository {
         firebaseDatabaseService.removeSentRequest(otherUserID, myUserID)
     }
 
-    fun removeChat(chatID: String) {
-        firebaseDatabaseService.removeChat(chatID)
+    fun removeChat(userID: String,chatID: String) {
+        firebaseDatabaseService.removeChat(userID, chatID)
     }
 
-    fun removeMessages(messagesID: String){
-        firebaseDatabaseService.removeMessages(messagesID)
+    fun removeMessages(userID: String,messagesID: String){
+        firebaseDatabaseService.removeMessages(userID, messagesID)
     }
 
     //endregion
@@ -110,10 +112,16 @@ class DatabaseRepository {
         }.addOnFailureListener { b.invoke(Result.Error(it.message)) }
     }
 
-    fun loadChat(chatID: String, b: ((Result<Chat>) -> Unit)) {
-        firebaseDatabaseService.loadChatTask(chatID).addOnSuccessListener {
+    fun loadChat(userID: String, chatID: String, b: (Result<Chat>) -> Unit) {
+        firebaseDatabaseService.loadChatTask(userID, chatID).addOnSuccessListener {
             b.invoke(Result.Success(wrapSnapshotToClass(Chat::class.java, it)))
         }.addOnFailureListener { b.invoke(Result.Error(it.message)) }
+    }
+
+    fun loadMessagesAdded(myUserID: String, messagesIDs: String, b:(Result<MutableList<Message>>) -> Unit) {
+        firebaseDatabaseService.loadMessages(myUserID,messagesIDs).addOnSuccessListener {
+            b.invoke(Result.Success(wrapSnapshotToArrayList(Message::class.java,it)))
+        }.addOnFailureListener{b.invoke(Result.Error(it.message))}
     }
 
     //endregion
@@ -136,11 +144,11 @@ class DatabaseRepository {
         }.addOnFailureListener { b.invoke(Result.Error(it.message)) }
     }
 
-    fun loadNotifications(userID: String, b: ((Result<MutableList<UserNotification>>) -> Unit)) {
+    fun loadCalls(userID: String, b: ((Result<MutableList<Call>>) -> Unit)) {
         b.invoke(Result.Loading)
-        firebaseDatabaseService.loadNotificationsTask(userID).addOnSuccessListener {
-            val notificationsList = wrapSnapshotToArrayList(UserNotification::class.java, it)
-            b.invoke(Result.Success(notificationsList))
+        firebaseDatabaseService.loadCallsTask(userID).addOnSuccessListener {
+            val callsList = wrapSnapshotToArrayList(Call::class.java, it)
+            b.invoke(Result.Success(callsList))
         }.addOnFailureListener { b.invoke(Result.Error(it.message)) }
     }
 
@@ -150,7 +158,7 @@ class DatabaseRepository {
     fun loadAndObserveUser(userID: String, observer: FirebaseReferenceValueObserver, b: ((Result<User>) -> Unit)) {
         firebaseDatabaseService.attachUserObserver(User::class.java, userID, observer, b)
     }
-    fun loadAndObserveConact(userID: String,contactID: String, observer: FirebaseReferenceValueObserver, b: ((Result<UserContact>) -> Unit)) {
+    fun loadAndObserveContact(userID: String, contactID: String, observer: FirebaseReferenceValueObserver, b: ((Result<UserContact>) -> Unit)) {
         firebaseDatabaseService.attachContactObserver(UserContact::class.java, userID, contactID , observer, b)
     }
     fun loadAndObserveContacts(userID: String, observer: FirebaseReferenceChildObserver, b: (Result<UserContact>) -> Unit) {
@@ -164,17 +172,29 @@ class DatabaseRepository {
         firebaseDatabaseService.attachUserInfoObserver(UserInfo::class.java, userID, observer, b)
     }
 
-    fun loadAndObserveUserNotifications(userID: String, observer: FirebaseReferenceValueObserver, b: ((Result<MutableList<UserNotification>>) -> Unit)){
-        firebaseDatabaseService.attachUserNotificationsObserver(UserNotification::class.java, userID, observer, b)
+    fun loadAndObserveUserCalls(userID: String, observer: FirebaseReferenceValueObserver, b: ((Result<MutableList<Call>>) -> Unit)){
+        firebaseDatabaseService.attachUserCallsObserver(Call::class.java, userID, observer, b)
     }
 
-    fun loadAndObserveMessagesAdded(messagesID: String, observer: FirebaseReferenceChildObserver, b: ((Result<Message>) -> Unit)) {
-        firebaseDatabaseService.attachMessagesObserver(Message::class.java, messagesID, observer, b)
+    fun loadAndObserveMessagesAdded(userID: String,messagesID: String, observer: FirebaseReferenceChildObserver, b: ((Result<Message>) -> Unit)) {
+        firebaseDatabaseService.attachMessagesObserver(
+            Message::class.java,userID,
+            messagesID,
+            observer,
+            b
+        )
     }
 
-    fun loadAndObserveChat(chatID: String, observer: FirebaseReferenceValueObserver, b: ((Result<Chat>) -> Unit)) {
-        firebaseDatabaseService.attachChatObserver(Chat::class.java, chatID, observer, b)
+    fun loadAndObserveChildrenMessagesAdded(userID: String,observer: FirebaseReferenceChildObserver,b: ((Result<MutableList<Message>>) -> Unit)){
+        firebaseDatabaseService.attachChildrenMessagesObserver(Message::class.java,userID,observer,b)
+
     }
+
+    fun loadAndObserveChat(userID: String,chatID: String, observer: FirebaseReferenceValueObserver, b: ((Result<Chat>) -> Unit)) {
+        firebaseDatabaseService.attachChatObserver(Chat::class.java,userID, chatID, observer, b)
+    }
+
+
 
     //endregion
 }

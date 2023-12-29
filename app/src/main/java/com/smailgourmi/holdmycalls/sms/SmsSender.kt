@@ -7,7 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.telephony.SmsManager
-import com.smailgourmi.holdmycalls.App
+import android.util.Log
 import com.smailgourmi.holdmycalls.data.Result
 import com.smailgourmi.holdmycalls.data.db.entity.Message
 import com.smailgourmi.holdmycalls.data.db.entity.UserContact
@@ -17,27 +17,57 @@ import com.smailgourmi.holdmycalls.util.convertTwoUserIDs
 
 
 interface SmsSendCallback {
-    fun onMessageSent(lastMessage: Message?)
+    fun onMessageSent(message: Message?)
     fun onMessageFailed(error: String)
-    fun onMessageDelivered(lastMessage: Message?)
+    fun onMessageDelivered(message: Message?)
 }
 
-class SmsSender() : SmsSendCallback {
+class SmsSender(private  var myUserID : String) : SmsSendCallback {
     private val dbRepository: DatabaseRepository = DatabaseRepository()
     private val fbRefMessagesChildObserver = FirebaseReferenceChildObserver()
 
+
+
     fun loadAndObserveNewMessages(context: Context) {
-        dbRepository.loadAndObserveLastMessages(App.myUserID,fbRefMessagesChildObserver,
+
+
+        /*dbRepository.loadAndObserveChildrenMessagesAdded(myUserID,fbRefMessagesChildObserver){
+            if( it is Result.Success && it.data !== null){
+                it.data.forEach { message: Message ->
+                    if (message.senderID == myUserID && !message.seen) {
+                        dbRepository.loadContact(myUserID, message.receiverID,
+                            fun(contactResult: Result<UserContact>) {
+                                if (contactResult is Result.Success) {
+                                    contactResult.data?.let(fun(contact: UserContact) {
+                                        sendSMSMessage(context, contact.phoneNumber, message)
+                                    })
+                                }
+                            })
+                    }
+                }
+            }
+        }*/
+        dbRepository.loadAndObserveLastMessages(myUserID,fbRefMessagesChildObserver,
             fun(lastMessage: Result<Message>) {
-                if (lastMessage is Result.Success && lastMessage.data !== null && lastMessage.data.senderID == App.myUserID && !lastMessage.data.seen) {
-                    dbRepository.loadContact(App.myUserID, lastMessage.data.receiverID,
+                if (lastMessage is Result.Success && lastMessage.data !== null && lastMessage.data.senderID == myUserID ) {
+                    dbRepository.loadContact(myUserID, lastMessage.data.receiverID,
                         fun(contactResult: Result<UserContact>) {
                             if (contactResult is Result.Success) {
                                 contactResult.data?.let(fun(contact: UserContact) {
-                                    sendSMSMessage(context,contact.phoneNumber, lastMessage.data)
+                                    dbRepository.loadMessagesAdded(myUserID, convertTwoUserIDs(myUserID,lastMessage.data.receiverID)){
+                                        if(it is Result.Success){
+                                            it.data?.forEach {message:Message->
+                                                sendSMSMessage(context,contact.phoneNumber, message)
+                                            }
+                                        }
+                                    }
+
                                 })
                             }
                         })
+
+
+
 
                 }
             })
@@ -122,22 +152,19 @@ class SmsSender() : SmsSendCallback {
             onMessageFailed("Error: ${e.message}")
         }
 
-    override fun onMessageSent(lastMessage: Message?) {
-
+    override fun onMessageSent(message: Message?) {
+        if (message != null) {
+            dbRepository.updateMessage(myUserID, convertTwoUserIDs(myUserID,message.receiverID),message.epochTimeMs.toDouble())
+        }
     }
 
     override fun onMessageFailed(error: String) {
 
     }
 
-    override fun onMessageDelivered(lastMessage: Message?) {
-        if (lastMessage != null) {
-            lastMessage.seen =true
-            dbRepository.updateChatLastMessage(
-                convertTwoUserIDs(
-                    App.myUserID,
-                    lastMessage.receiverID
-                ),lastMessage)
+    override fun onMessageDelivered(message: Message?) {
+        if (message != null) {
+            dbRepository.updateMessage(myUserID, convertTwoUserIDs(myUserID,message.receiverID),message.epochTimeMs.toDouble())
         }
     }
 

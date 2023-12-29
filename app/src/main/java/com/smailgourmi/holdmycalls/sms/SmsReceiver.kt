@@ -68,7 +68,7 @@ class SmsReceiver : BroadcastReceiver() {
         chatID: String,
         newMsg: Message
     ) {
-        dbRepository.updateNewMessage(chatID, newMsg)
+        dbRepository.updateNewMessage(App.myUserID,chatID, newMsg)
     }
 
     private fun updateNewReceivedMessage(
@@ -76,7 +76,7 @@ class SmsReceiver : BroadcastReceiver() {
         chatID: String,
         newMsg: Message
     ) {
-        dbRepository.updateChatLastMessage(chatID, newMsg)
+        dbRepository.updateChatLastMessage(App.myUserID,chatID, newMsg)
     }
     private fun updateContactsList(
         dbRepository: DatabaseRepository,
